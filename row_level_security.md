@@ -21,6 +21,17 @@ ALTER TABLE projects ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "owner_can_read" ON projects
   FOR SELECT
   USING ( owner_id = auth.uid() );
+
+-- 例: role `general_role` は自身の行のみ、`admin_role` は全行を読み取れる
+CREATE POLICY "general_read_own" ON projects
+  FOR SELECT
+  TO general_role
+  USING ( owner_id = auth.uid() );
+
+CREATE POLICY "admin_read_all" ON projects
+  FOR SELECT
+  TO admin_role
+  USING ( TRUE );
 ```
 
 - **権限チェックの順序**: `GRANT`/`REVOKE` → RLS ポリシー
